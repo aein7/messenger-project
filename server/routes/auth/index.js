@@ -30,11 +30,7 @@ router.post("/register", async (req, res, next) => {
       { expiresIn: 86400 }
     );
 
-    res.cookie(
-      'token', 
-      token, 
-      jwtCookieConfig
-    );
+    res.cookie('token', token, jwtCookieConfig);
 
     res.json({
       ...user.dataValues
@@ -74,11 +70,7 @@ router.post("/login", async (req, res, next) => {
         { expiresIn: 86400 }
       );
 
-      res.cookie(
-        'token', 
-        token, 
-        jwtCookieConfig
-      );
+      res.cookie('token', token, jwtCookieConfig);
 
       res.json({
         ...user.dataValues
