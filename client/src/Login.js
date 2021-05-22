@@ -15,24 +15,34 @@ import bgImg from './assets/bg-img.png';
 import { login } from "./store/utils/thunkCreators";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  login: {
     height: '100vh',
   },
   loginForm:{
-    width: '100%',
+    width: '50%',
   },
   formElem: {
-    width: '50%'
+    width: '100%'
   },
   register: {
-    padding: '1rem',
+    padding: '2rem 3rem 0 0',
     '& p':{
-      margin: '0.4rem 1rem',
-      color: "#B0B0B0"
+      margin: '1.2rem',
+      color: "#B0B0B0",
+      fontSize: '1.1em'
+      
+    },
+    '& button': {
+      boxShadow: '0px 8px 16px 0px rgb(0 0 0 / 13%)',
+      padding: '1rem 2.5rem'
     }
   },
   submitButton: {
     marginTop: '2rem',
+    padding: '1rem 3.5rem',
+  },
+  formTitle: {
+    textAlign: 'left'
   }
 
 }));
@@ -55,7 +65,7 @@ const Login = (props) => {
   }
 
   return (
-    <Grid container component="main" className={classes.root}>
+    <Grid container className={classes.login}>
       <CssBaseline />
 
       <ImageSideBanner bgImg={bgImg}></ImageSideBanner>
@@ -63,30 +73,32 @@ const Login = (props) => {
       <Grid container item direction='row' sm={12} md={7}>
         <Grid container item justify='flex-end' alignItems='flex-start' className={classes.register}>
           <Typography >Don't have an account?</Typography>
-          <Button onClick={() => history.push("/register")} variant="outlined" color="primary">Register</Button>
+          <Button onClick={() => history.push("/register")} size="large" color="primary">Create Account</Button>
         </Grid>
 
         <Grid container item align='center' justify='center'>
         
         <form onSubmit={handleLogin} className={classes.loginForm}>
-          <Typography gutterBottom={true} variant="h4">Welcome back!</Typography>
+          <Typography gutterBottom={true} variant="h4" className={classes.formTitle}>Welcome back!</Typography>
            <Grid>
              <Grid>
-               <FormControl margin="normal" required className={classes.formElem}>
+               <FormControl margin="normal"  className={classes.formElem}>
                  <TextField
                   aria-label="username"
                   label="Username"
                   name="username"
                   type="text"
+                  required
                 />
               </FormControl>
             </Grid>
-            <FormControl margin="normal" required className={classes.formElem}>
+            <FormControl margin="normal" className={classes.formElem}>
               <TextField
-                label="password"
+                label="Password"
                 aria-label="password"
                 type="password"
                 name="password"
+                required
               />
             </FormControl>
             <Grid>

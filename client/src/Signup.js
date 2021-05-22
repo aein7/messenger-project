@@ -17,24 +17,34 @@ import { register } from "./store/utils/thunkCreators";
 
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  signup: {
     height: '100vh',
   },
   signupForm:{
-    width: '100%',
+    width: '50%',
   },
   formElem: {
-    width: '50%'
+    width: '100%'
   },
   login: {
-    padding: '1rem',
+    padding: '2rem 3rem 0 0',
     '& p':{
-      margin: '0.4rem 1rem',
-      color: "#B0B0B0"
+      margin: '1.2rem',
+      color: "#B0B0B0",
+      fontSize: '1.1em'
+      
+    },
+    '& button': {
+      boxShadow: '0px 8px 16px 0px rgb(0 0 0 / 13%)',
+      padding: '1rem 2.5rem'
     }
   },
   submitButton: {
     marginTop: '2rem',
+    padding: '1rem 3.5rem',
+  },
+  formTitle: {
+    textAlign: 'left'
   }
 
 }));
@@ -65,21 +75,21 @@ const Signup = (props) => {
   }
 
   return (
-    <Grid container component="main" className={classes.root}>
+    <Grid container className={classes.signup}>
       <CssBaseline />
 
       <ImageSideBanner bgImg={bgImg}></ImageSideBanner>
 
       <Grid container item direction='row' sm={12} md={7}>
         <Grid container item justify='flex-end' alignItems='flex-start' className={classes.login}>
-          <Typography >Already have an account?</Typography>
-          <Button onClick={() => history.push("/login")} variant="outlined" color="primary">Login</Button>
+          <Typography>Already have an account?</Typography>
+          <Button onClick={() => history.push("/login")} size="large" color="primary">Login</Button>
         </Grid>
 
         <Grid container item align='center' justify='center'>
         
           <form onSubmit={handleRegister} className={classes.signupForm}>
-            <Typography gutterBottom={true} variant="h4">Create Your Account</Typography>
+            <Typography gutterBottom={true} variant="h4" className={classes.formTitle}>Create An Account.</Typography>
             <Grid>
               <Grid>
                 <FormControl className={classes.formElem}>
