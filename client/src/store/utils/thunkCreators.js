@@ -1,5 +1,5 @@
 import axios from "axios";
-import socket from "../../socket";
+import socketInstance from "../../socket";
 import {
   gotConversations,
   addConversation,
@@ -16,7 +16,7 @@ export const fetchUser = () => async (dispatch) => {
     const { data } = await axios.get("/auth/user");
     dispatch(gotUser(data));
     if (data.id) {
-      socket.emit("go-online", data.id);
+      socketInstance.connectSocket(data.id);
     }
   } catch (error) {
     console.error(error);
@@ -30,7 +30,8 @@ export const register = (credentials) => async (dispatch) => {
     const { data } = await axios.post("/auth/register", credentials);
 
     dispatch(gotUser(data));
-    socket.emit("go-online", data.id);
+    socketInstance.connectSocket(data.id);
+    
   } catch (error) {
     console.error(error);
     dispatch(gotUser({ error: error.response.data.error || "Server Error" }));
@@ -42,7 +43,8 @@ export const login = (credentials) => async (dispatch) => {
     const { data } = await axios.post("/auth/login", credentials);
 
     dispatch(gotUser(data));
-    socket.emit("go-online", data.id);
+    socketInstance.connectSocket(data.id);
+    
   } catch (error) {
     console.error(error);
     dispatch(gotUser({ error: error.response.data.error || "Server Error" }));
@@ -54,7 +56,7 @@ export const logout = (id) => async (dispatch) => {
     await axios.delete("/auth/logout");
 
     dispatch(gotUser({}));
-    socket.emit("logout", id);
+    socketInstance.disconnectSocketOnLogout(id);
   } catch (error) {
     console.error(error);
   }
@@ -76,14 +78,6 @@ const saveMessage = async (body) => {
   return data;
 };
 
-const sendMessage = (data, body) => {
-  socket.emit("new-message", {
-    message: data.message,
-    recipientId: body.recipientId,
-    sender: data.sender,
-  });
-};
-
 // message format to send: {recipientId, text, conversationId}
 // conversationId will be set to null if its a brand new conversation
 export const postMessage = (body) => (dispatch) => {
@@ -96,7 +90,7 @@ export const postMessage = (body) => (dispatch) => {
       dispatch(setNewMessage(data.message));
     }
 
-    sendMessage(data, body);
+    socketInstance.sendNewMessage(data, body)
   } catch (error) {
     console.error(error);
   }
