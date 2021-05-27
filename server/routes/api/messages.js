@@ -20,7 +20,7 @@ router.post("/", async (req, res, next) => {
     if (conversation && conversationId === conversation.id) {
       const message = await Message.create({ senderId, text, conversationId });
       return res.json({ message, sender });
-    } else if (conversationId != conversation.id) {
+    } else if (conversation && conversationId != conversation.id) {
       return res.sendStatus(403)
     }
    
