@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  updatedMessagesReadStatus,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -70,6 +71,22 @@ export const fetchConversations = () => async (dispatch) => {
     console.error(error);
   }
 };
+
+export const updateMessagesReadStatus = (body) => async (dispatch) => {
+  try {
+    if(body.messages){
+      const unreadCount = body.messages?.filter(m => m.unread && m.senderId === body.otherUser.id).length;
+
+      if(unreadCount > 0){
+        const { data } = await axios.patch("/api/messages/updateReadStatus", body)
+        dispatch(updatedMessagesReadStatus(data, body))
+        console.log(data)
+      } 
+    } 
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 const saveMessage = async (body) => {
   const { data } = await axios.post("/api/messages", body);
