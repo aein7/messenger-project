@@ -77,7 +77,7 @@ export const fetchConversations = () => async (dispatch) => {
 export const updateMessagesReadStatus = (body) => async (dispatch) => {
   try {
     if(body.messages){
-      const unreadCount = body.messages?.filter(m => m.unread && m.senderId === body.otherUser.id).length;
+      const unreadCount = body.messages.filter(m => m.unread && m.senderId === body.otherUser.id).length;
 
       if(unreadCount > 0){
         const { data } = await axios.patch("/api/messages/updateReadStatus", body)
