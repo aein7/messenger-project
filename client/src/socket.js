@@ -6,21 +6,51 @@ import {
   addOnlineUser,
 } from "./store/conversations";
 
-const socket = io(window.location.origin);
+class SocketService {
+  constructor() {
+    this.socket = io({
+      autoConnect: false,
+      secure: true
+    });
+  }
 
-socket.on("connect", () => {
-  console.log("connected to server");
+  connectSocket(userId){
+    this.socket.on('connect', () => {
+      console.log("connected to server");
+  
+      this.socket.on("add-online-user", (id) => {
+        store.dispatch(addOnlineUser(id));
+      });
+      
+      this.socket.on("remove-offline-user", (id) => {
+        store.dispatch(removeOfflineUser(id));
+      });
+    
+      this.socket.on("new-message", (data) => {
+        store.dispatch(setNewMessage(data.message, data.sender));
+      });
+    });
+  
+    this.socket.open();
+    this.socket.emit("go-online", userId);
+  
+    return this.socket
+  }
 
-  socket.on("add-online-user", (id) => {
-    store.dispatch(addOnlineUser(id));
-  });
+  sendNewMessage(data,body) {
+    this.socket.emit("new-message", {
+      message: data.message,
+      recipientId: body.recipientId,
+      sender: data.sender,
+    });
+  }
 
-  socket.on("remove-offline-user", (id) => {
-    store.dispatch(removeOfflineUser(id));
-  });
-  socket.on("new-message", (data) => {
-    store.dispatch(setNewMessage(data.message, data.sender));
-  });
-});
+  disconnectSocketOnLogout(id){
+    this.socket.emit("logout", id);
+    this.socket.disconnect(true);
+  }
+}
 
-export default socket;
+const socketInstance = new SocketService();
+
+export default socketInstance
