@@ -63,9 +63,7 @@ router.patch("/updateReadStatus", async (req, res, next) => {
           .filter(message => message.senderId != senderId && message.unread)
           .map(message => message.id);
 
-      console.log(`messages to update: ${messagesToUpdate}`)
       if(messagesToUpdate.length > 0){
-        
         await Message.update({
           unread: false,
         }, {
@@ -81,7 +79,6 @@ router.patch("/updateReadStatus", async (req, res, next) => {
       return res.sendStatus(403)
     }
 
-    console.log(req.body)
     res.send(messagesToUpdate);
   } catch (error) {
     next(error)
