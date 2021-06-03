@@ -2,6 +2,8 @@ const router = require("express").Router();
 const { Conversation, Message } = require("../../db/models");
 const { Op } = require("sequelize");
 const onlineUsers = require("../../onlineUsers");
+const ConversationUtils = require("../../utils/conversation.utils");
+const convoUtil = new ConversationUtils();
 
 // expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)
 router.post("/", async (req, res, next) => {
@@ -50,36 +52,38 @@ router.patch("/updateReadStatus", async (req, res, next) => {
   try {
     const senderId = req.user.id;
     const { otherUser, messages, id: conversationId } = req.body;
-    let messagesToUpdate = [];
 
-    let conversation = await Conversation.findConversation(
+    const conversation = await Conversation.findConversation(
       senderId,
       otherUser.id
     );
 
     // Verify that the conversation between the sender/recipient exists and matches the request
     if (conversation && conversationId === conversation.id) {
-      messagesToUpdate = messages
-          .filter(message => message.senderId != senderId && message.unread)
-          .map(message => message.id);
-
-      if(messagesToUpdate.length > 0){
         await Message.update({
           unread: false,
         }, {
           where: {
-            id: {
-              [Op.in]: messagesToUpdate
+            senderId: {
+              [Op.not]: senderId
+            },
+            unread: {
+              [Op.is]: true
             }
           }
         });
-
-      }
     } else if (conversation && conversationId != conversation.id) {
       return res.sendStatus(403)
     }
 
-    res.send(messagesToUpdate);
+    const updatedConversation = await Conversation.findOneConversationAndMessages(
+      senderId, 
+      otherUser.id
+    );
+
+    const formattedConvo = convoUtil.formatOneConversation(updatedConversation);
+
+    res.json(formattedConvo);
   } catch (error) {
     next(error)
   }

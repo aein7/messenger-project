@@ -77,11 +77,13 @@ export const fetchConversations = () => async (dispatch) => {
 export const updateMessagesReadStatus = (body) => async (dispatch) => {
   try {
     if(body.messages){
-      const unreadCount = body.messages.filter(m => m.unread && m.senderId === body.otherUser.id).length;
+      const unreadCount = body.unreadCount;
 
       if(unreadCount > 0){
         const { data } = await axios.patch("/api/messages/updateReadStatus", body)
-        dispatch(updatedMessagesReadStatus(data, body))
+        dispatch(updatedMessagesReadStatus(data))
+
+        socketInstance.conversationRead(data)
       } 
     } 
   } catch (error) {

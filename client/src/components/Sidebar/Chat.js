@@ -27,7 +27,7 @@ class Chat extends Component {
   render() {
     const { classes } = this.props;
     const otherUser = this.props.conversation.otherUser;
-    const unreadCount = this.props.unreadCount;
+    const unreadCount = this.props.conversation.unreadCount;
 
     return (
       <Box

@@ -44,8 +44,9 @@ const useStyles = makeStyles((theme) => ({
 const ChatContent = (props) => {
   const classes = useStyles();
 
-  const { conversation, unreadCount } = props;
+  const { conversation } = props;
   const { latestMessageText, otherUser } = conversation;
+  const unreadCount = conversation.unreadCount
 
   return (
     <Box className={classes.root}>

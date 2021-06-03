@@ -1,5 +1,5 @@
 export const addMessageToStore = (state, payload) => {
-  const { message, sender } = payload;
+  const { message, sender, isRecipient } = payload;
   // if sender isn't null, that means the message needs to be put in a brand new convo
   if (sender !== null) {
     const newConvo = {
@@ -16,7 +16,11 @@ export const addMessageToStore = (state, payload) => {
       const convoCopy = { ...convo };
       convoCopy.messages.push(message);
       convoCopy.latestMessageText = message.text;
-
+      
+      if(isRecipient){
+        convoCopy.unreadCount += 1;
+      }
+      
       return convoCopy;
     } else {
       return convo;
@@ -25,17 +29,11 @@ export const addMessageToStore = (state, payload) => {
 };
 
 export const updateMessageReadStatusInStore = (state, payload) => {
-  const { messagesUpdated, conversation } = payload;
+  const { updatedConversation } = payload;
 
   return state.map((convo) => {
-    if(convo.id === conversation.id){
-      conversation.messages.map((message) => { 
-        if(messagesUpdated.includes(message.id)) {
-          message.unread = false
-        }
-        return message
-      })
-      return conversation
+    if(convo.id === updatedConversation.id){
+      return updatedConversation
     } else {
       return convo
     }
