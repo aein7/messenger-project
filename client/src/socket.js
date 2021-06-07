@@ -4,6 +4,7 @@ import {
   setNewMessage,
   removeOfflineUser,
   addOnlineUser,
+  updatedMessagesReadStatus
 } from "./store/conversations";
 
 class SocketService {
@@ -16,7 +17,6 @@ class SocketService {
 
   connectSocket(userId){
     this.socket.on('connect', () => {
-      console.log("connected to server");
   
       this.socket.on("add-online-user", (id) => {
         store.dispatch(addOnlineUser(id));
@@ -27,14 +27,24 @@ class SocketService {
       });
     
       this.socket.on("new-message", (data) => {
-        store.dispatch(setNewMessage(data.message, data.sender));
+        store.dispatch(setNewMessage(data.message, data.sender, data.isRecipient));
       });
+
+      this.socket.on("conversation-read", (updatedConversation) => {
+        store.dispatch(updatedMessagesReadStatus(updatedConversation))
+      })
     });
   
     this.socket.open();
     this.socket.emit("go-online", userId);
   
     return this.socket
+  }
+
+  conversationRead(updatedConversation){
+    this.socket.emit("conversation-read", {
+      updatedConversation
+    })
   }
 
   sendNewMessage(data,body) {
