@@ -64,6 +64,9 @@ router.patch("/updateReadStatus", async (req, res, next) => {
           unread: false,
         }, {
           where: {
+            conversationId: {
+              [Op.eq]: conversation.id
+            },
             senderId: {
               [Op.not]: senderId
             },
